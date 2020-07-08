@@ -20,8 +20,10 @@
 #define NONCE_LENGTH 27 * 3
 
 trit_t *do_pow(Curl *const curl, trit_t const *const trits_in, size_t const trits_len, uint8_t const mwm) {
-  tryte_t *nonce_trits = (tryte_t *)calloc(NONCE_LENGTH + 1, sizeof(tryte_t));
-
+  tryte_t *nonce_trits = (tryte_t *)malloc(NONCE_LENGTH + 1, sizeof(tryte_t));
+  for(unsigned int i = 0; i < NONCE_LENGTH + 1; i++){
+    nonce_trits[i] = (tryte_t) '9';
+  }  
   curl_absorb(curl, trits_in, trits_len - HASH_LENGTH_TRIT);
   memcpy(curl->state, trits_in + trits_len - HASH_LENGTH_TRIT, HASH_LENGTH_TRIT);
 
