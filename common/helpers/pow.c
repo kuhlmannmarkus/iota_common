@@ -31,9 +31,11 @@ trit_t *do_pow(Curl *const curl, trit_t const *const trits_in, size_t const trit
   PearlDiverStatus status = hashcash(curl, HASH_LENGTH_TRIT - NONCE_LENGTH, HASH_LENGTH_TRIT, mwm);
   if (PEARL_DIVER_SUCCESS == status) {
     memcpy(nonce_trits, curl->state + HASH_LENGTH_TRIT - NONCE_LENGTH, NONCE_LENGTH);
+    printf("HASHCASH SUCCESSFUL\n");
   } else {
     free(nonce_trits);
     nonce_trits = NULL;
+    printf("HASHCASH NOT SUCCESSFUL\n");
   }
 
   return nonce_trits;
@@ -49,6 +51,7 @@ IOTA_EXPORT char *iota_pow_trytes(char const *const trytes_in, uint8_t const mwm
 
   trit_t *trits = (trit_t *)malloc(trits_len);
   if (!trits) {
+    printf("DO_POW: trits not allocated\n");
     return NULL;
   }
   trytes_to_trits((tryte_t *)trytes_in, trits, tryte_len);
@@ -76,17 +79,20 @@ IOTA_EXPORT flex_trit_t *iota_pow_flex(flex_trit_t const *const flex_trits_in, s
 
   trit_t *trits = (trit_t *)calloc(num_trits, sizeof(trit_t));
   if (!trits) {
+    printf("POW_FLEX: trits not initialized\n");
     return NULL;
   }
   flex_trits_to_trits(trits, num_trits, flex_trits_in, num_trits, num_trits);
   trit_t *nonce_trits = do_pow(&curl, trits, num_trits, mwm);
   free(trits);
   if (!nonce_trits) {
+    printf("POW_FLEX: nonce_trits is NULL\n");
     return NULL;
   }
   flex_trit_t *nonce_flex_trits = (flex_trit_t *)calloc(NUM_TRITS_NONCE, sizeof(flex_trit_t));
   if (!nonce_flex_trits) {
     free(nonce_trits);
+    printf("POW_FLEX: nonce_flex_trits is NULL\n");
     return NULL;
   }
   flex_trits_from_trits(nonce_flex_trits, NUM_TRITS_NONCE, nonce_trits, NUM_TRITS_NONCE, NUM_TRITS_NONCE);
@@ -151,6 +157,7 @@ IOTA_EXPORT retcode_t iota_pow_bundle(bundle_transactions_t *const bundle, flex_
     if (transaction_current_index(tx) != 0) {
       transaction_serialize_on_flex_trits(tx, txflex);
       if ((ctrunk = iota_flex_digest(txflex, NUM_TRITS_SERIALIZED_TRANSACTION)) == NULL) {
+	printf("POW_BUNDLE: digest is NULL\n");
         return RC_OOM;
       }
     }
