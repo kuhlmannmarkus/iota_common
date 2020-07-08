@@ -45,7 +45,7 @@ IOTA_EXPORT char *iota_pow_trytes(char const *const trytes_in, uint8_t const mwm
   int tryte_len = strlen(trytes_in);
   int trits_len = tryte_len * 3;
 
-  trit_t *trits = (trit_t *)calloc(trits_len, sizeof(trit_t));
+  trit_t *trits = (trit_t *)malloc(trits_len);
   if (!trits) {
     return NULL;
   }
@@ -56,7 +56,7 @@ IOTA_EXPORT char *iota_pow_trytes(char const *const trytes_in, uint8_t const mwm
   if (!nonce_trits) {
     return NULL;
   }
-  tryte_t *nonce_trytes = (tryte_t *)calloc(NUM_TRITS_NONCE / 3 + 1, sizeof(tryte_t));
+  tryte_t *nonce_trytes = (tryte_t *)malloc(NUM_TRITS_NONCE / 3 + 1);
   if (!nonce_trytes) {
     free(nonce_trits);
     return NULL;
